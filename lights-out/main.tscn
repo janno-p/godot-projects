@@ -1,0 +1,79 @@
+[gd_scene format=3 uid="uid://bgwi3edts65yl"]
+
+[ext_resource type="Script" uid="uid://cswccqfxr28em" path="res://Main.cs" id="1_ig7tw"]
+
+[node name="Control" type="Control" unique_id=1155776593]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ig7tw")
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=249803828]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=897631905]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label2" type="Label" parent="CenterContainer/VBoxContainer" unique_id=442269127]
+layout_mode = 2
+text = "Click on the light to toggle it and its nearest top-bottom-left-right neighbours"
+horizontal_alignment = 1
+autowrap_mode = 1
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer" unique_id=1287053633]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="Board" type="GridContainer" parent="CenterContainer/VBoxContainer" unique_id=34612007]
+layout_mode = 2
+columns = 3
+
+[node name="Button" type="Button" parent="CenterContainer/VBoxContainer/Board" unique_id=1437532066]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+
+[node name="Button2" type="Button" parent="CenterContainer/VBoxContainer/Board" unique_id=2092471873]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+
+[node name="Button3" type="Button" parent="CenterContainer/VBoxContainer/Board" unique_id=1023988956]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+
+[node name="Button4" type="Button" parent="CenterContainer/VBoxContainer/Board" unique_id=424290987]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+
+[node name="Button5" type="Button" parent="CenterContainer/VBoxContainer/Board" unique_id=209659794]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+
+[node name="Button6" type="Button" parent="CenterContainer/VBoxContainer/Board" unique_id=1620490321]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+
+[node name="Button7" type="Button" parent="CenterContainer/VBoxContainer/Board" unique_id=1815969802]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+
+[node name="Button8" type="Button" parent="CenterContainer/VBoxContainer/Board" unique_id=187419445]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+
+[node name="Button9" type="Button" parent="CenterContainer/VBoxContainer/Board" unique_id=1218576752]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+
+[node name="RestartButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1774278133]
+layout_mode = 2
+offset_transform_enabled = true
+text = "Restart"

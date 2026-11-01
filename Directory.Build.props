@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+  	<LangVersion>preview</LangVersion>
+   	<ImplicitUsings>enable</ImplicitUsings>
+   	<Nullable>enable</Nullable>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)shared/System.Runtime.CompilerServices/*.cs"
+             Link="Shared/System.Runtime.CompilerServices/%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>
