@@ -1,0 +1,217 @@
+[gd_scene format=3 uid="uid://sudmwatf6qch"]
+
+[ext_resource type="Script" uid="uid://6jjk5s2txel3" path="res://Player.cs" id="1_ig7tw"]
+
+[node name="Node2D" type="Node2D" unique_id=2101741159]
+
+[node name="WallTile01" type="Polygon2D" parent="." unique_id=939663028 groups=["walls"]]
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile02" type="Polygon2D" parent="." unique_id=1787824921 groups=["walls"]]
+position = Vector2(48, 0)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile03" type="Polygon2D" parent="." unique_id=208769011 groups=["walls"]]
+position = Vector2(96, 0)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile04" type="Polygon2D" parent="." unique_id=1991373022 groups=["walls"]]
+position = Vector2(144, 0)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile05" type="Polygon2D" parent="." unique_id=1466462309 groups=["walls"]]
+position = Vector2(192, 0)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile06" type="Polygon2D" parent="." unique_id=367259085 groups=["walls"]]
+position = Vector2(240, 0)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile07" type="Polygon2D" parent="." unique_id=1299808201 groups=["walls"]]
+position = Vector2(0, 48)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile08" type="Polygon2D" parent="." unique_id=2086539652 groups=["walls"]]
+position = Vector2(240, 48)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile09" type="Polygon2D" parent="." unique_id=228557232 groups=["walls"]]
+position = Vector2(0, 96)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile10" type="Polygon2D" parent="." unique_id=1958644753 groups=["walls"]]
+position = Vector2(240, 96)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile11" type="Polygon2D" parent="." unique_id=145028184 groups=["walls"]]
+position = Vector2(0, 144)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile12" type="Polygon2D" parent="." unique_id=1149737825 groups=["walls"]]
+position = Vector2(48, 144)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile13" type="Polygon2D" parent="." unique_id=1482600897 groups=["walls"]]
+position = Vector2(144, 144)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile14" type="Polygon2D" parent="." unique_id=1646489772 groups=["walls"]]
+position = Vector2(240, 144)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile15" type="Polygon2D" parent="." unique_id=508229442 groups=["walls"]]
+position = Vector2(0, 192)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile16" type="Polygon2D" parent="." unique_id=2034961645 groups=["walls"]]
+position = Vector2(240, 192)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile17" type="Polygon2D" parent="." unique_id=1586500970 groups=["walls"]]
+position = Vector2(0, 240)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile18" type="Polygon2D" parent="." unique_id=1066547239 groups=["walls"]]
+position = Vector2(48, 240)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile19" type="Polygon2D" parent="." unique_id=988707598 groups=["walls"]]
+position = Vector2(96, 240)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile20" type="Polygon2D" parent="." unique_id=1119352377 groups=["walls"]]
+position = Vector2(144, 240)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile21" type="Polygon2D" parent="." unique_id=1868098865 groups=["walls"]]
+position = Vector2(192, 240)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="WallTile22" type="Polygon2D" parent="." unique_id=93032407 groups=["walls"]]
+position = Vector2(240, 240)
+color = Color(0.16078432, 0.16078432, 0.16078432, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="FloorTile01" type="Polygon2D" parent="." unique_id=1898820980]
+position = Vector2(48, 48)
+color = Color(0.6, 0.6, 0.6, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="FloorTile02" type="Polygon2D" parent="." unique_id=2136389802]
+position = Vector2(96, 48)
+color = Color(0.6, 0.6, 0.6, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="FloorTile03" type="Polygon2D" parent="." unique_id=1148386624]
+position = Vector2(144, 48)
+color = Color(0.6, 0.6, 0.6, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="FloorTile04" type="Polygon2D" parent="." unique_id=1354660386]
+position = Vector2(192, 48)
+color = Color(0.6, 0.6, 0.6, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="FloorTile05" type="Polygon2D" parent="." unique_id=1186132400]
+position = Vector2(48, 96)
+color = Color(0.6, 0.6, 0.6, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="FloorTile06" type="Polygon2D" parent="." unique_id=1103566827]
+position = Vector2(96, 96)
+color = Color(0.6, 0.6, 0.6, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="FloorTile07" type="Polygon2D" parent="." unique_id=861316116]
+position = Vector2(144, 96)
+color = Color(0.6, 0.6, 0.6, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="FloorTile08" type="Polygon2D" parent="." unique_id=1116576660]
+position = Vector2(192, 96)
+color = Color(0.6, 0.6, 0.6, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="FloorTile09" type="Polygon2D" parent="." unique_id=600518166]
+position = Vector2(96, 144)
+color = Color(0.6, 0.6, 0.6, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="FloorTile10" type="Polygon2D" parent="." unique_id=330513874]
+position = Vector2(192, 144)
+color = Color(0.6, 0.6, 0.6, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="FloorTile11" type="Polygon2D" parent="." unique_id=1825809861]
+position = Vector2(48, 192)
+color = Color(0.6, 0.6, 0.6, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="FloorTile12" type="Polygon2D" parent="." unique_id=1208101715]
+position = Vector2(96, 192)
+color = Color(0.6, 0.6, 0.6, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="FloorTile13" type="Polygon2D" parent="." unique_id=1552376431]
+position = Vector2(144, 192)
+color = Color(0.6, 0.6, 0.6, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="FloorTile14" type="Polygon2D" parent="." unique_id=632998799]
+position = Vector2(192, 192)
+color = Color(0.6, 0.6, 0.6, 1)
+polygon = PackedVector2Array(0, 0, 48, 0, 48, 48, 0, 48)
+
+[node name="Goal" type="Polygon2D" parent="." unique_id=509787470]
+position = Vector2(48, 192)
+color = Color(0.18039216, 0.8, 0.44313726, 1)
+polygon = PackedVector2Array(4, 4, 44, 4, 44, 44, 4, 44)
+
+[node name="Player" type="Polygon2D" parent="." unique_id=723446805]
+position = Vector2(48, 96)
+color = Color(0.20392157, 0.59607846, 0.85882354, 1)
+polygon = PackedVector2Array(8, 8, 40, 8, 40, 40, 8, 40)
+script = ExtResource("1_ig7tw")
+
+[node name="Crate" type="Polygon2D" parent="." unique_id=2091359877]
+position = Vector2(144, 96)
+color = Color(0.9019608, 0.49411765, 0.13333334, 1)
+polygon = PackedVector2Array(8, 8, 40, 8, 40, 40, 8, 40)
+
+[node name="WinMessage" type="Label" parent="." unique_id=45760759]
+visible = false
+offset_top = 304.0
+offset_right = 40.0
+offset_bottom = 327.0
+text = "Solved!"
+
+[node name="RestartHint" type="Label" parent="." unique_id=946638988]
+custom_minimum_size = Vector2(298, 0)
+offset_top = 340.0
+offset_right = 298.0
+offset_bottom = 363.0
+text = "Use arrow keys to move blue player. Player can move the orange crate only by pushing it. Try to move the crate to the green target location.
+
+Press \"R\" to restart."
+autowrap_mode = 2

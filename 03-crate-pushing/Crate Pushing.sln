@@ -1,0 +1,19 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crate Pushing", "Crate Pushing.csproj", "{CE292C38-C0AA-464D-A798-3F7FA4330F16}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|Any CPU = Debug|Any CPU
+	ExportDebug|Any CPU = ExportDebug|Any CPU
+	ExportRelease|Any CPU = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE292C38-C0AA-464D-A798-3F7FA4330F16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE292C38-C0AA-464D-A798-3F7FA4330F16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE292C38-C0AA-464D-A798-3F7FA4330F16}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{CE292C38-C0AA-464D-A798-3F7FA4330F16}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{CE292C38-C0AA-464D-A798-3F7FA4330F16}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{CE292C38-C0AA-464D-A798-3F7FA4330F16}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+	EndGlobalSection
+EndGlobal
