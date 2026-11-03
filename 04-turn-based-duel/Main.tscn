@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://34i8ig67g1ib"]
+
+[ext_resource type="Script" uid="uid://djjux7iliekgs" path="res://Main.cs" id="1_uu6xs"]
+[ext_resource type="PackedScene" uid="uid://cte5quptt5ml3" path="res://Actor.tscn" id="2_r0du0"]
+
+[node name="Main" type="Node2D" unique_id=731817907]
+script = ExtResource("1_uu6xs")
+
+[node name="Floor" type="Polygon2D" parent="." unique_id=988500606]
+color = Color(0.2509804, 0.2509804, 0.2509804, 1)
+polygon = PackedVector2Array(0, 0, 288, 0, 288, 240, 0, 240)
+
+[node name="Player" parent="." unique_id=334124356 instance=ExtResource("2_r0du0")]
+modulate = Color(0, 1, 1, 1)
+
+[node name="Enemy" parent="." unique_id=1040866195 instance=ExtResource("2_r0du0")]
+modulate = Color(1, 0.64705884, 0, 1)
+
+[node name="PlayerHP" type="Label" parent="." unique_id=1349743962]
+offset_left = 300.0
+offset_right = 340.0
+offset_bottom = 23.0
+text = "Player HP: 0"
+
+[node name="EnemyHP" type="Label" parent="." unique_id=503001737]
+offset_left = 300.0
+offset_top = 30.0
+offset_right = 393.0
+offset_bottom = 53.0
+text = "Enemy HP: 0"
+
+[node name="Status" type="Label" parent="." unique_id=2076153805]
+offset_left = 300.0
+offset_top = 80.0
+offset_right = 396.0
+offset_bottom = 103.0
+text = "Your turn"
+
+[node name="Label" type="Label" parent="." unique_id=2006609344]
+offset_left = 300.0
+offset_top = 130.0
+offset_right = 448.0
+offset_bottom = 153.0
+text = "Use arrow keys to move the player.
+Move toward enemy to attack it
+when adjacent to it.
+Press \"R\" to restart"

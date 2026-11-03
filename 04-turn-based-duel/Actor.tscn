@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://cte5quptt5ml3"]
+
+[ext_resource type="Script" uid="uid://hlx35alscxrk" path="res://Actor.cs" id="1_8nsss"]
+
+[node name="Actor" type="Node2D" unique_id=334124356]
+script = ExtResource("1_8nsss")
+
+[node name="Polygon2D" type="Polygon2D" parent="." unique_id=1896259873]
+polygon = PackedVector2Array(8, 8, 40, 8, 40, 40, 8, 40)
