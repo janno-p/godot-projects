@@ -1,11 +1,16 @@
 using Godot;
 using System;
+using System.Threading;
 using TurnBasedDuel.Scripts;
 
 namespace TurnBasedDuel;
 
 public partial class Main : Node2D
 {
+	private const double AnimationSpeed = 0.2;
+
+	private readonly SemaphoreSlim _animation = new(1, 1);
+
 	private readonly Stack<HistoryEntry> _history = new();
 	private readonly Stack<HistoryEntry> _revertedHistory = new();
 
@@ -42,7 +47,8 @@ public partial class Main : Node2D
 		_gameState = new PlayerTurn();
 		GD.Print($"Game ready, it's {_gameState}");
 
-		UpdateScreen();
+		UpdateLabels();
+		UpdateActors();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -50,68 +56,82 @@ public partial class Main : Node2D
 	{
 	}
 
-	public override void _UnhandledInput(InputEvent @event)
+	public override async void _UnhandledInput(InputEvent @event)
 	{
-		if (@event.IsActionPressed("restart"))
-		{
-			GetTree().ReloadCurrentScene();
-			return;
-		}
-
-		if (@event.IsActionPressed("undo"))
-		{
-			LoadLatestHistoryEntry();
-			UpdateScreen();
-			return;
-		}
-
-		if (@event.IsActionPressed("redo"))
-		{
-			LoadLatestRevertedHistoryEntry();
-			UpdateScreen();
-			return;
-		}
-
-		if (_gameState is not PlayerTurn)
+		if (!await _animation.WaitAsync(0))
 		{
 			return;
 		}
 
-		var movement = Vector2I.Zero;
-
-		if (@event.IsActionPressed("move_right"))
-			movement = Vector2I.Right;
-		else if (@event.IsActionPressed("move_left"))
-			movement = Vector2I.Left;
-		else if (@event.IsActionPressed("move_up"))
-			movement = Vector2I.Up;
-		else if (@event.IsActionPressed("move_down"))
-			movement = Vector2I.Down;
-
-		if (movement == Vector2I.Zero)
+		try
 		{
-			return;
+			if (@event.IsActionPressed("restart"))
+			{
+				GetTree().ReloadCurrentScene();
+				return;
+			}
+
+			if (@event.IsActionPressed("undo"))
+			{
+				LoadLatestHistoryEntry();
+				UpdateLabels();
+				UpdateActors();
+				return;
+			}
+
+			if (@event.IsActionPressed("redo"))
+			{
+				LoadLatestRevertedHistoryEntry();
+				UpdateLabels();
+				UpdateActors();
+				return;
+			}
+
+			if (_gameState is not PlayerTurn)
+			{
+				return;
+			}
+
+			var movement = Vector2I.Zero;
+
+			if (@event.IsActionPressed("move_right"))
+				movement = Vector2I.Right;
+			else if (@event.IsActionPressed("move_left"))
+				movement = Vector2I.Left;
+			else if (@event.IsActionPressed("move_up"))
+				movement = Vector2I.Up;
+			else if (@event.IsActionPressed("move_down"))
+				movement = Vector2I.Down;
+
+			if (movement == Vector2I.Zero)
+			{
+				return;
+			}
+
+			await PlayerAction(_playerCell + movement);
+			await EnemyAction();
 		}
-
-		PlayerAction(_playerCell + movement);
-		EnemyAction();
-
-		if (_gameState is FinishedDuel { PlayerWin: var isPlayerWin })
+		catch (Exception exception)
 		{
-			var winner = isPlayerWin ? "Player" : "Enemy";
-			GD.Print($"Player: {Player.HealthPoints}HP; Enemy: {Enemy.HealthPoints}HP; {winner} wins");
+			GD.PushError("Error occurred while updating the game state", exception);
 		}
-
-		UpdateScreen();
+		finally
+		{
+			_animation.Release();
+		}
 	}
 
-	private void PlayerAction(Vector2I candidateCell)
+	private async Task PlayerAction(Vector2I candidateCell)
 	{
 		if (candidateCell.X < 0 || candidateCell.X > 5 || candidateCell.Y < 0 || candidateCell.Y > 4)
+		{
 			return;
+		}
 
 		AddHistoryEntry();
 		_revertedHistory.Clear();
+
+		GameState nextTurn = new EnemyTurn();
 
 		if (candidateCell == _enemyCell)
 		{
@@ -120,19 +140,34 @@ public partial class Main : Node2D
 
 			if (Enemy.HealthPoints == 0)
 			{
-				_gameState = new FinishedDuel(PlayerWin: true);
-				return;
+				nextTurn = new FinishedDuel(PlayerWin: true);
 			}
 		}
 		else
 		{
 			GD.Print("Player moves");
 			_playerCell = candidateCell;
+
+			await AnimateActor(Player, _playerCell);
 		}
 
-		GD.Print($"Player: {Player.HealthPoints}HP; Enemy: {Enemy.HealthPoints}HP");
+		ChangeTurn(nextTurn);
+		PrintGameState();
 
-		ChangeTurn(new EnemyTurn());
+		UpdateLabels();
+	}
+
+	private void PrintGameState()
+	{
+		var winnerText = "";
+
+		if (_gameState is FinishedDuel { PlayerWin: var isPlayerWin })
+		{
+			var winner = isPlayerWin ? "Player" : "Enemy";
+			winnerText = $"; {winner} wins";
+		}
+
+		GD.Print($"Player: {Player.HealthPoints}HP; Enemy: {Enemy.HealthPoints}HP{winnerText}");
 	}
 
 	private void AddHistoryEntry()
@@ -180,12 +215,14 @@ public partial class Main : Node2D
 		_gameState = entry.GameState;
 	}
 
-	private void EnemyAction()
+	private async Task EnemyAction()
 	{
 		if (_gameState is not EnemyTurn)
 		{
 			return;
 		}
+
+		GameState nextTurn = new PlayerTurn();
 
 		var distance = _enemyCell - _playerCell;
 		if ((Math.Abs(distance.X) + Math.Abs(distance.Y)) == 1)
@@ -195,8 +232,7 @@ public partial class Main : Node2D
 
 			if (Player.HealthPoints == 0)
 			{
-				_gameState = new FinishedDuel(PlayerWin: false);
-				return;
+				nextTurn = new FinishedDuel(PlayerWin: false);
 			}
 		}
 		else
@@ -207,11 +243,14 @@ public partial class Main : Node2D
 
 			GD.Print("Enemy moves");
 			_enemyCell = candidateCell;
+
+			await AnimateActor(Enemy, _enemyCell);
 		}
 
-		GD.Print($"Player: {Player.HealthPoints}HP; Enemy: {Enemy.HealthPoints}HP");
+		ChangeTurn(nextTurn);
+		PrintGameState();
 
-		ChangeTurn(new PlayerTurn());
+		UpdateLabels();
 	}
 
 	private void ChangeTurn(GameState newState)
@@ -221,13 +260,10 @@ public partial class Main : Node2D
 		GD.Print($"{previousState} completed: waiting for {_gameState}");
 	}
 
-	private void UpdateScreen()
+	private void UpdateLabels()
 	{
 		UndoLabel.Visible = _history.Count > 0;
 		RedoLabel.Visible = _revertedHistory.Count > 0;
-
-		Player.Position = CellToScreen(_playerCell);
-		Enemy.Position = CellToScreen(_enemyCell);
 
 		PlayerHP.Text = $"Player HP: {Player.HealthPoints}";
 		EnemyHP.Text = $"Enemy HP: {Enemy.HealthPoints}";
@@ -235,10 +271,25 @@ public partial class Main : Node2D
 		Status.Text = _gameState switch
 		{
 			PlayerTurn => "Your turn",
-			EnemyTurn => "Enemys turn",
+			EnemyTurn => "Enemy turn",
 			FinishedDuel { PlayerWin: true } => "You win",
 			FinishedDuel { PlayerWin: false } => "You lose",
 		};
+	}
+
+	private void UpdateActors()
+	{
+		Player.Position = CellToScreen(_playerCell);
+		Enemy.Position = CellToScreen(_enemyCell);
+	}
+
+	private async Task AnimateActor(Actor actor, Vector2I targetCell)
+	{
+		using var tween = CreateTween();
+
+		tween.TweenProperty(actor, "position", CellToScreen(targetCell), AnimationSpeed);
+
+		await ToSignal(tween, Tween.SignalName.Finished);
 	}
 
 	private static Vector2 CellToScreen(Vector2I vector)
