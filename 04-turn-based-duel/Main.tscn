@@ -30,18 +30,33 @@ offset_bottom = 53.0
 text = "Enemy HP: 0"
 
 [node name="Status" type="Label" parent="." unique_id=2076153805]
-offset_left = 300.0
-offset_top = 80.0
-offset_right = 396.0
-offset_bottom = 103.0
+offset_left = 450.0
+offset_right = 546.0
+offset_bottom = 23.0
 text = "Your turn"
 
 [node name="Label" type="Label" parent="." unique_id=2006609344]
 offset_left = 300.0
-offset_top = 130.0
-offset_right = 448.0
-offset_bottom = 153.0
+offset_top = 75.0
+offset_right = 572.0
+offset_bottom = 202.0
 text = "Use arrow keys to move the player.
 Move toward enemy to attack it
 when adjacent to it.
-Press \"R\" to restart"
+Press \"R\" to restart."
+
+[node name="UndoLabel" type="Label" parent="." unique_id=1118600200]
+visible = false
+offset_left = 300.0
+offset_top = 190.0
+offset_right = 527.0
+offset_bottom = 213.0
+text = "Press \"U\" to revert last move."
+
+[node name="RedoLabel" type="Label" parent="." unique_id=1606416925]
+visible = false
+offset_left = 300.0
+offset_top = 215.0
+offset_right = 340.0
+offset_bottom = 238.0
+text = "Press \"Y\" to redo previously reverted move."

@@ -6,6 +6,9 @@ namespace TurnBasedDuel;
 
 public partial class Main : Node2D
 {
+	private readonly Stack<HistoryEntry> _history = new();
+	private readonly Stack<HistoryEntry> _revertedHistory = new();
+
 	private GameState _gameState = new PlayerTurn();
 
 	private Vector2I _playerCell = Vector2I.Zero;
@@ -16,10 +19,15 @@ public partial class Main : Node2D
 	private Label PlayerHP { get; set; } = null!;
 	private Label EnemyHP { get; set; } = null!;
 	private Label Status { get; set; } = null!;
+	private Label UndoLabel { get; set; } = null!;
+	private Label RedoLabel { get; set; } = null!;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		_history.Clear();
+		_revertedHistory.Clear();
+
 		_playerCell = new Vector2I(1, 2);
 		_enemyCell = new Vector2I(4, 2);
 
@@ -28,14 +36,13 @@ public partial class Main : Node2D
 		PlayerHP = GetNode<Label>("PlayerHP");
 		EnemyHP = GetNode<Label>("EnemyHP");
 		Status = GetNode<Label>("Status");
-
-		Player.Position = CellToScreen(_playerCell);
-		Enemy.Position = CellToScreen(_enemyCell);
+		UndoLabel = GetNode<Label>("UndoLabel");
+		RedoLabel = GetNode<Label>("RedoLabel");
 
 		_gameState = new PlayerTurn();
 		GD.Print($"Game ready, it's {_gameState}");
 
-		UpdateLabels();
+		UpdateScreen();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -48,6 +55,20 @@ public partial class Main : Node2D
 		if (@event.IsActionPressed("restart"))
 		{
 			GetTree().ReloadCurrentScene();
+			return;
+		}
+
+		if (@event.IsActionPressed("undo"))
+		{
+			LoadLatestHistoryEntry();
+			UpdateScreen();
+			return;
+		}
+
+		if (@event.IsActionPressed("redo"))
+		{
+			LoadLatestRevertedHistoryEntry();
+			UpdateScreen();
 			return;
 		}
 
@@ -81,13 +102,16 @@ public partial class Main : Node2D
 			GD.Print($"Player: {Player.HealthPoints}HP; Enemy: {Enemy.HealthPoints}HP; {winner} wins");
 		}
 
-		UpdateLabels();
+		UpdateScreen();
 	}
 
 	private void PlayerAction(Vector2I candidateCell)
 	{
 		if (candidateCell.X < 0 || candidateCell.X > 5 || candidateCell.Y < 0 || candidateCell.Y > 4)
 			return;
+
+		AddHistoryEntry();
+		_revertedHistory.Clear();
 
 		if (candidateCell == _enemyCell)
 		{
@@ -104,12 +128,56 @@ public partial class Main : Node2D
 		{
 			GD.Print("Player moves");
 			_playerCell = candidateCell;
-			Player.Position = CellToScreen(_playerCell);
 		}
 
 		GD.Print($"Player: {Player.HealthPoints}HP; Enemy: {Enemy.HealthPoints}HP");
 
 		ChangeTurn(new EnemyTurn());
+	}
+
+	private void AddHistoryEntry()
+	{
+		_history.Push(new HistoryEntry(_playerCell, _enemyCell, Player.HealthPoints, Enemy.HealthPoints, _gameState));
+	}
+
+	private void AddRevertedHistoryEntry()
+	{
+		_revertedHistory.Push(new HistoryEntry(_playerCell, _enemyCell, Player.HealthPoints, Enemy.HealthPoints, _gameState));
+	}
+
+	private void LoadLatestHistoryEntry()
+	{
+		if (!_history.TryPop(out var entry))
+		{
+			return;
+		}
+
+		AddRevertedHistoryEntry();
+
+		RestoreStateFromEntry(entry);
+	}
+
+	private void LoadLatestRevertedHistoryEntry()
+	{
+		if (!_revertedHistory.TryPop(out var entry))
+		{
+			return;
+		}
+
+		AddHistoryEntry();
+
+		RestoreStateFromEntry(entry);
+	}
+
+	private void RestoreStateFromEntry(HistoryEntry entry)
+	{
+		_playerCell = entry.PlayerCell;
+		_enemyCell = entry.EnemyCell;
+
+		Player.HealthPoints = entry.PlayerHealthPoints;
+		Enemy.HealthPoints = entry.EnemyHealthPoints;
+
+		_gameState = entry.GameState;
 	}
 
 	private void EnemyAction()
@@ -139,7 +207,6 @@ public partial class Main : Node2D
 
 			GD.Print("Enemy moves");
 			_enemyCell = candidateCell;
-			Enemy.Position = CellToScreen(_enemyCell);
 		}
 
 		GD.Print($"Player: {Player.HealthPoints}HP; Enemy: {Enemy.HealthPoints}HP");
@@ -154,8 +221,14 @@ public partial class Main : Node2D
 		GD.Print($"{previousState} completed: waiting for {_gameState}");
 	}
 
-	private void UpdateLabels()
+	private void UpdateScreen()
 	{
+		UndoLabel.Visible = _history.Count > 0;
+		RedoLabel.Visible = _revertedHistory.Count > 0;
+
+		Player.Position = CellToScreen(_playerCell);
+		Enemy.Position = CellToScreen(_enemyCell);
+
 		PlayerHP.Text = $"Player HP: {Player.HealthPoints}";
 		EnemyHP.Text = $"Enemy HP: {Enemy.HealthPoints}";
 
