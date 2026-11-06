@@ -1,13 +1,12 @@
 using Godot;
-using System;
-using System.Threading;
 using TurnBasedDuel.Scripts;
 
 namespace TurnBasedDuel;
 
 public partial class Main : Node2D
 {
-	private const double AnimationSpeed = 0.2;
+	private const double MoveAnimationSpeed = 0.2;
+	private const double AttackAnimationSpeed = 0.1;
 
 	private readonly SemaphoreSlim _animation = new(1, 1);
 
@@ -15,9 +14,6 @@ public partial class Main : Node2D
 	private readonly Stack<HistoryEntry> _revertedHistory = new();
 
 	private GameState _gameState = new PlayerTurn();
-
-	private Vector2I _playerCell = Vector2I.Zero;
-	private Vector2I _enemyCell = Vector2I.Zero;
 
 	private Actor Player { get; set; } = null!;
 	private Actor Enemy { get; set; } = null!;
@@ -33,9 +29,6 @@ public partial class Main : Node2D
 		_history.Clear();
 		_revertedHistory.Clear();
 
-		_playerCell = new Vector2I(1, 2);
-		_enemyCell = new Vector2I(4, 2);
-
 		Player = GetNode<Actor>("Player");
 		Enemy = GetNode<Actor>("Enemy");
 		PlayerHP = GetNode<Label>("PlayerHP");
@@ -43,6 +36,12 @@ public partial class Main : Node2D
 		Status = GetNode<Label>("Status");
 		UndoLabel = GetNode<Label>("UndoLabel");
 		RedoLabel = GetNode<Label>("RedoLabel");
+
+		Player.GridPosition = new Vector2I(1, 2);
+		Enemy.GridPosition = new Vector2I(4, 2);
+
+		Player.HealthChanged += UpdateLabels;
+		Enemy.HealthChanged += UpdateLabels;
 
 		_gameState = new PlayerTurn();
 		GD.Print($"Game ready, it's {_gameState}");
@@ -92,23 +91,23 @@ public partial class Main : Node2D
 				return;
 			}
 
-			var movement = Vector2I.Zero;
+			var direction = Vector2I.Zero;
 
 			if (@event.IsActionPressed("move_right"))
-				movement = Vector2I.Right;
+				direction = Vector2I.Right;
 			else if (@event.IsActionPressed("move_left"))
-				movement = Vector2I.Left;
+				direction = Vector2I.Left;
 			else if (@event.IsActionPressed("move_up"))
-				movement = Vector2I.Up;
+				direction = Vector2I.Up;
 			else if (@event.IsActionPressed("move_down"))
-				movement = Vector2I.Down;
+				direction = Vector2I.Down;
 
-			if (movement == Vector2I.Zero)
+			if (direction == Vector2I.Zero)
 			{
 				return;
 			}
 
-			await PlayerAction(_playerCell + movement);
+			await PlayerAction(direction);
 			await EnemyAction();
 		}
 		catch (Exception exception)
@@ -121,8 +120,10 @@ public partial class Main : Node2D
 		}
 	}
 
-	private async Task PlayerAction(Vector2I candidateCell)
+	private async Task PlayerAction(Vector2I direction)
 	{
+		var candidateCell = Player.GridPosition + direction;
+
 		if (candidateCell.X < 0 || candidateCell.X > 5 || candidateCell.Y < 0 || candidateCell.Y > 4)
 		{
 			return;
@@ -131,30 +132,31 @@ public partial class Main : Node2D
 		AddHistoryEntry();
 		_revertedHistory.Clear();
 
-		GameState nextTurn = new EnemyTurn();
-
-		if (candidateCell == _enemyCell)
+		if (candidateCell == Enemy.GridPosition)
 		{
 			GD.Print("Player attacks");
+
 			Enemy.DealDamage();
 
 			if (Enemy.HealthPoints == 0)
 			{
-				nextTurn = new FinishedDuel(PlayerWin: true);
+				ChangeTurn(new FinishedDuel(PlayerWin: true));
 			}
+
+			await AnimateAttack(Player, Enemy);
 		}
 		else
 		{
 			GD.Print("Player moves");
-			_playerCell = candidateCell;
+			Player.GridPosition = candidateCell;
 
-			await AnimateActor(Player, _playerCell);
+			await AnimateActor(Player);
 		}
 
-		ChangeTurn(nextTurn);
-		PrintGameState();
-
-		UpdateLabels();
+		if (_gameState is not FinishedDuel)
+		{
+			ChangeTurn(new EnemyTurn());
+		}
 	}
 
 	private void PrintGameState()
@@ -172,12 +174,12 @@ public partial class Main : Node2D
 
 	private void AddHistoryEntry()
 	{
-		_history.Push(new HistoryEntry(_playerCell, _enemyCell, Player.HealthPoints, Enemy.HealthPoints, _gameState));
+		_history.Push(new HistoryEntry(Player.GridPosition, Enemy.GridPosition, Player.HealthPoints, Enemy.HealthPoints, _gameState));
 	}
 
 	private void AddRevertedHistoryEntry()
 	{
-		_revertedHistory.Push(new HistoryEntry(_playerCell, _enemyCell, Player.HealthPoints, Enemy.HealthPoints, _gameState));
+		_revertedHistory.Push(new HistoryEntry(Player.GridPosition, Enemy.GridPosition, Player.HealthPoints, Enemy.HealthPoints, _gameState));
 	}
 
 	private void LoadLatestHistoryEntry()
@@ -206,10 +208,10 @@ public partial class Main : Node2D
 
 	private void RestoreStateFromEntry(HistoryEntry entry)
 	{
-		_playerCell = entry.PlayerCell;
-		_enemyCell = entry.EnemyCell;
-
+		Player.GridPosition = entry.PlayerCell;
 		Player.HealthPoints = entry.PlayerHealthPoints;
+
+		Enemy.GridPosition = entry.EnemyCell;
 		Enemy.HealthPoints = entry.EnemyHealthPoints;
 
 		_gameState = entry.GameState;
@@ -222,42 +224,47 @@ public partial class Main : Node2D
 			return;
 		}
 
-		GameState nextTurn = new PlayerTurn();
-
-		var distance = _enemyCell - _playerCell;
+		var distance = Enemy.GridPosition - Player.GridPosition;
 		if ((Math.Abs(distance.X) + Math.Abs(distance.Y)) == 1)
 		{
 			GD.Print("Enemy attacks");
+
 			Player.DealDamage();
 
 			if (Player.HealthPoints == 0)
 			{
-				nextTurn = new FinishedDuel(PlayerWin: false);
+				ChangeTurn(new FinishedDuel(PlayerWin: false));
 			}
+
+			await AnimateAttack(Enemy, Player);
 		}
 		else
 		{
 			var candidateCell = distance.X != 0
-				? _enemyCell - new Vector2I(distance.Sign().X, 0)
-				: _enemyCell - new Vector2I(0, distance.Sign().Y);
+				? Enemy.GridPosition - new Vector2I(distance.Sign().X, 0)
+				: Enemy.GridPosition - new Vector2I(0, distance.Sign().Y);
 
 			GD.Print("Enemy moves");
-			_enemyCell = candidateCell;
+			Enemy.GridPosition = candidateCell;
 
-			await AnimateActor(Enemy, _enemyCell);
+			await AnimateActor(Enemy);
 		}
 
-		ChangeTurn(nextTurn);
-		PrintGameState();
-
-		UpdateLabels();
+		if (_gameState is not FinishedDuel)
+		{
+			ChangeTurn(new PlayerTurn());
+		}
 	}
 
 	private void ChangeTurn(GameState newState)
 	{
 		var previousState = _gameState;
 		_gameState = newState;
+
 		GD.Print($"{previousState} completed: waiting for {_gameState}");
+
+		PrintGameState();
+		UpdateLabels();
 	}
 
 	private void UpdateLabels()
@@ -279,15 +286,36 @@ public partial class Main : Node2D
 
 	private void UpdateActors()
 	{
-		Player.Position = CellToScreen(_playerCell);
-		Enemy.Position = CellToScreen(_enemyCell);
+		Player.Position = CellToScreen(Player.GridPosition);
+		Enemy.Position = CellToScreen(Enemy.GridPosition);
 	}
 
-	private async Task AnimateActor(Actor actor, Vector2I targetCell)
+	private async Task AnimateActor(Actor actor)
 	{
 		using var tween = CreateTween();
 
-		tween.TweenProperty(actor, "position", CellToScreen(targetCell), AnimationSpeed);
+		tween.TweenProperty(actor, "position", CellToScreen(actor.GridPosition), MoveAnimationSpeed);
+
+		await ToSignal(tween, Tween.SignalName.Finished);
+	}
+
+	private async Task AnimateAttack(Actor attacker, Actor target)
+	{
+		var direction = target.GridPosition - attacker.GridPosition;
+
+		var attackerPolygon = attacker.GetNode<Polygon2D>("Polygon2D");
+		var position = attackerPolygon.Position;
+
+		var targetPolygon = target.GetNode<Polygon2D>("Polygon2D");
+		var modulate = targetPolygon.SelfModulate;
+
+		using var tween = CreateTween();
+
+		tween.TweenProperty(attackerPolygon, "position", position + (18 * direction), AttackAnimationSpeed);
+		tween.Parallel().TweenProperty(targetPolygon, "self_modulate", modulate.Darkened(0.5f), AttackAnimationSpeed);
+
+		tween.TweenProperty(attackerPolygon, "position", position, AttackAnimationSpeed);
+		tween.Parallel().TweenProperty(targetPolygon, "self_modulate", modulate, AttackAnimationSpeed);
 
 		await ToSignal(tween, Tween.SignalName.Finished);
 	}

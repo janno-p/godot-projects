@@ -1,11 +1,26 @@
 using Godot;
-using System;
 
 namespace TurnBasedDuel;
 
 public partial class Actor : Node2D
 {
-	public uint HealthPoints { get; set; }
+	[Signal]
+	public delegate void HealthChangedEventHandler();
+
+	public uint HealthPoints
+	{
+		get;
+		set
+		{
+			if (field != value)
+			{
+				field = value;
+				EmitSignal(SignalName.HealthChanged);
+			}
+		}
+	}
+
+	public Vector2I GridPosition { get; set; } = Vector2I.Zero;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
